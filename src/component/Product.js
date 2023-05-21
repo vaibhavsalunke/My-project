@@ -3,22 +3,32 @@ import Nav from "./Nav";
 import { Link, useNavigate } from "react-router-dom";
 
 const Product = () => {
-  const [product, setProduct] = useState([]);
+  const [product, setProduct] = useState([""]);
+
   useEffect(() => {
     getProducts();
   }, []);
 
-  const getProducts = async () => {
-    let result = await fetch("http://localhost:5000/product");
+  const getProducts = async (e) => {
+    let result = await fetch("http://localhost:8080/product");
     result = await result.json();
     setProduct(result);
   };
   console.log("product", product);
-
   const navigate = useNavigate();
   function add() {
-    navigate("/addcategory");
+    navigate("/addproduct");
   }
+
+  const deleteProduct = async (id) => {
+    let result = await fetch(`http://localhost:8080/product/${id}`, {
+      method: "Delete",
+    });
+    result = await result.json();
+    if (result) {
+      getProducts();
+    }
+  };
   return (
     <>
       <Nav />
@@ -61,38 +71,48 @@ const Product = () => {
               </button>
             </div>
           </div>
-        </div>
-        <table className="table pt-4">
-          <thead>
-            <tr>
-              <th scope="col">Id</th>
-              <th scope="col">Name</th>
-              <th scope="col">PackSize</th>
-              <th scope="col">category</th>
-              <th scope="col">MRP</th>
 
-              <th scope="col">Status</th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {product.map((index, item) => {
+          <table className="table container pt-5 mt-4">
+            <thead>
               <tr>
-                <th scope="row">{index + 1}</th>
-                <td>{item.name}</td>
-                <td>{item.size}</td>
-                <td>{item.category}</td>
-                <td>{item.mrp}</td>
-                <td>{item.status}</td>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">PackSize</th>
+                <th scope="col">category</th>
+                <th scope="col">MRP</th>
 
-                <td>
-                  <button className="btn btn-danger">Edit</button>
-                  <button className="btn btn-primary">Delete</button>
-                </td>
-              </tr>;
-            })}
-          </tbody>
-        </table>
+                <th scope="col">Status</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {product.map((item, index) => {
+                return (
+                  <tr>
+                    <th scope="row">{index + 1}</th>
+                    <td>{item.name}</td>
+                    <td>{item.packsize}</td>
+                    <td>{item.category}</td>
+                    <td>{item.mrp}</td>
+                    <td>{item.status}</td>
+
+                    <td>
+                      <Link to={"/updateproduct/" + item._id}>
+                        <button className="btn btn-danger">Edit</button>
+                      </Link>
+                      <button
+                        onClick={() => deleteProduct(item._id)}
+                        className="btn btn-primary"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </>
   );

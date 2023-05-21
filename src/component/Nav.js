@@ -1,22 +1,21 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Nav = () => {
+  const navigate = useNavigate();
+  const navigatation = (e) => {
+    navigate("/");
+  };
   return (
     <>
       <nav class="navbar navbar-light bg-primary justify-content-between">
         <a class="navbar-brand text-white">Digital Flake</a>
 
-        <button
-          type="button"
-          class="btn btn-primary"
-          data-toggle="modal"
-          data-target="#exampleModal"
-        >
+        <button type="button" onClick={navigatation} class="btn btn-primary">
           LogOut
         </button>
 
-        <div
+        {/* <div
           class="modal fade"
           id="exampleModal"
           tabindex="-1"
@@ -48,13 +47,17 @@ const Nav = () => {
                 >
                   Cancle
                 </button>
-                <Link type="button" to="/" class="btn btn-primary">
+                <button
+                  type="button"
+                  onClick={navigatation}
+                  class="btn btn-primary"
+                >
                   Confirm
-                </Link>
+                </button>
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </nav>
     </>
   );

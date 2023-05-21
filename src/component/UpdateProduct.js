@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Nav from "./Nav";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
-import { Link, useNavigate } from "react-router-dom";
-
-const AddProduct = () => {
+const UpdateProduct = () => {
+  const params = useParams();
   const navigate = useNavigate();
   const [category, SetCategory] = useState("");
   const [name, SetName] = useState("");
@@ -11,23 +11,37 @@ const AddProduct = () => {
   const [mrp, SetMrp] = useState("");
   const [status, SetStatus] = useState("");
 
-  const AddProduct = async () => {
-    console.log(category, name, packsize, mrp, status);
-    const result = await fetch("http://localhost:8080/add-product", {
-      method: "post",
+  useEffect(() => {
+    getProductDetails();
+  }, []);
+
+  const getProductDetails = async () => {
+    let result = await fetch(`http://localhost:8080/product/${params.id}`);
+    result = await result.json();
+    console.log(result);
+    SetCategory(result.category);
+    SetName(result.name);
+    SetSize(result.packsize);
+    SetMrp(result.mrp);
+    SetStatus(result.status);
+  };
+
+  const updateProduct = async () => {
+    let result = await fetch(`http://localhost:8080/product/${params.id}`, {
+      method: "Put",
       body: JSON.stringify({ category, name, packsize, mrp, status }),
       headers: {
         "Content-Type": "application/json",
       },
     });
     result = await result.json();
+    console.log(result);
     navigate("/product");
   };
-
   return (
     <>
       <Nav />
-      <div className="row px-3">
+      <div className="row">
         <div className="col-md-2">
           <ul className="bg-light h-full   ">
             <li className="">
@@ -41,11 +55,10 @@ const AddProduct = () => {
             </li>
           </ul>
         </div>
-
         <div className="container pt-2  col-md-10">
           <div className="add-category">
             <div className="card ">
-              <h4 className="pl-4 pt-3">Add Product</h4>
+              <h4 className="pl-4 pt-3">Update Product</h4>
               <div className="card-body">
                 <form>
                   <div class="row">
@@ -115,11 +128,11 @@ const AddProduct = () => {
               </div>
               <div class="footer float-right">
                 <button
-                  onClick={AddProduct}
+                  onClick={updateProduct}
                   type="submit"
                   class="btn btn-primary ml-4 mb-3"
                 >
-                  Save
+                  Update
                 </button>
               </div>
             </div>
@@ -130,4 +143,4 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default UpdateProduct;

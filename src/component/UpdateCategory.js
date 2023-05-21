@@ -1,29 +1,43 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Nav from "./Nav";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
-const AddCategory = () => {
+const UpdateCategory = () => {
+  const params = useParams();
   const navigate = useNavigate();
   const [name, SetName] = useState("");
   const [description, SetDescription] = useState("");
   const [status, SetStatus] = useState("");
 
-  const addcategory = async (e) => {
-    console.log(name, description, status);
-    const result = await fetch("http://localhost:8080/add-category", {
-      method: "post",
+  useEffect(() => {
+    getProductDetails();
+  }, []);
+
+  const getProductDetails = async () => {
+    let result = await fetch(`http://localhost:8080/category/${params.id}`);
+    result = await result.json();
+    console.log(result);
+    SetName(result.name);
+    SetDescription(result.description);
+    SetStatus(result.status);
+  };
+
+  const updateCategory = async () => {
+    let result = await fetch(`http://localhost:8080/category/${params.id}`, {
+      method: "Put",
       body: JSON.stringify({ name, description, status }),
       headers: {
         "Content-Type": "application/json",
       },
     });
     result = await result.json();
+    console.log(result);
     navigate("/category");
   };
   return (
     <>
       <Nav />
-      <div className="row px-3">
+      <div className="row">
         <div className="col-md-2">
           <ul className="bg-light h-full   ">
             <li className="">
@@ -37,7 +51,6 @@ const AddCategory = () => {
             </li>
           </ul>
         </div>
-
         <div className="container pt-2 col-md-10">
           <div className="add-category">
             <div className="card">
@@ -87,11 +100,11 @@ const AddCategory = () => {
               </div>
               <div class="footer float-right">
                 <button
-                  onClick={addcategory}
+                  onClick={updateCategory}
                   type="submit"
                   class="btn btn-primary ml-4 mb-2"
                 >
-                  Save
+                  update
                 </button>
               </div>
             </div>
@@ -102,4 +115,4 @@ const AddCategory = () => {
   );
 };
 
-export default AddCategory;
+export default UpdateCategory;

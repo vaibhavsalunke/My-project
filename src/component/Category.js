@@ -3,17 +3,27 @@ import Nav from "./Nav";
 import { Link, useNavigate } from "react-router-dom";
 
 const Category = () => {
-  const [category, setCatagory] = useState([]);
+  const [category, setCatagory] = useState([""]);
+
   useEffect(() => {
     getProducts();
   }, []);
 
-  const getProducts = async () => {
-    let result = await fetch("http://localhost:5000/category");
+  const getProducts = async (e) => {
+    let result = await fetch("http://localhost:8080/category");
     result = await result.json();
     setCatagory(result);
   };
-  console.log("category", category);
+
+  const deleteProduct = async (id) => {
+    let result = await fetch(`http://localhost:8080/category/${id}`, {
+      method: "Delete",
+    });
+    result = await result.json();
+    if (result) {
+      getProducts();
+    }
+  };
 
   const navigate = useNavigate();
   function add() {
@@ -76,16 +86,26 @@ const Category = () => {
             </thead>
             <tbody>
               {category.map((item, index) => {
-                <tr>
-                  <th scope="row">{index + 1}</th>
-                  <td>{item.name}</td>
-                  <td>{item.description}</td>
-                  <td>{item.status}</td>
-                  <td>
-                    <button className="btn btn-danger">Edit</button>
-                    <button className="btn btn-primary">Delete</button>
-                  </td>
-                </tr>;
+                return (
+                  <tr>
+                    <th scope="row">{index + 1}</th>
+                    <td>{item.name}</td>
+                    <td>{item.description}</td>
+                    <td>{item.status}</td>
+                    <td>
+                      <Link to={"/updatecategory/" + item._id}>
+                        {" "}
+                        <button className="btn btn-danger">Edit</button>
+                      </Link>
+                      <button
+                        onClick={() => deleteProduct(item._id)}
+                        className="btn btn-primary"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                );
               })}
             </tbody>
           </table>

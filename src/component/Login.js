@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 const Login = () => {
   const navigate = useNavigate();
   const handleClick = () => navigate("/dashboard");
+
+  const [mail, setMail] = useState();
+  const [password, setPassword] = useState();
   return (
     <>
       <div className="container m-auto">
@@ -19,6 +23,9 @@ const Login = () => {
                       class="form-control"
                       id="formGroupExampleInput"
                       placeholder="Enter Your Mail"
+                      onChange={(e) => {
+                        setMail(e.target.value);
+                      }}
                       required
                     />
                   </div>
@@ -28,6 +35,9 @@ const Login = () => {
                       class="form-control"
                       id="formGroupExampleInput2"
                       placeholder="Enter Your Password"
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                      }}
                       required
                     />
                   </div>
